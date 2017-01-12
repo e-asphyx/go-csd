@@ -1,5 +1,9 @@
 package csd
 
+import (
+	"fmt"
+)
+
 type CSD struct {
 	Bin   uint64
 	Signs uint64
@@ -113,8 +117,10 @@ type Op struct {
 	Sign  int
 }
 
-func (c CSD) Ops() []Op {
-	ops := make([]Op, 0, 64)
+type Ops []Op
+
+func (c CSD) GetOps() Ops {
+	ops := make(Ops, 0, 64)
 	var s int
 	for c.Bin != 0 {
 		for c.Bin&1 == 0 {
@@ -138,4 +144,20 @@ func (c CSD) Ops() []Op {
 	}
 
 	return ops
+}
+
+func (o Ops) Expr() string {
+	var expr string
+	for _, op := range o {
+
+		var sign string
+		if op.Sign < 0 {
+			sign = "-"
+		} else {
+			sign = "+"
+		}
+
+		expr += fmt.Sprintf("%s(x<<%d)", sign, op.Shift)
+	}
+	return expr
 }
