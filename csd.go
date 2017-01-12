@@ -64,9 +64,21 @@ func (c CSD) Ones() int {
 }
 
 func (c CSD) String() string {
-	var s string
-	for bit := 0; bit < 64; bit++ {
+	var (
+		s   string
+		bit int
+	)
 
+	for bit = 0; bit < 64 && c.Bin&(1<<63) == 0; bit++ {
+		c.Bin = c.Bin << 1
+		c.Signs = c.Signs << 1
+	}
+
+	if bit == 64 {
+		return "0"
+	}
+
+	for bit < 64 {
 		if c.Bin&(1<<63) == 0 {
 			s = s + "0"
 		} else {
@@ -79,6 +91,7 @@ func (c CSD) String() string {
 
 		c.Bin = c.Bin << 1
 		c.Signs = c.Signs << 1
+		bit++
 	}
 	return s
 }
